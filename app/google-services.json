@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "842886739768",
+    "firebase_url": "https://mr-private-db3c1-default-rtdb.firebaseio.com",
+    "project_id": "mr-private-db3c1",
+    "storage_bucket": "mr-private-db3c1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842886739768:android:56300b00db55017594f3cd",
+        "android_client_info": {
+          "package_name": "com.example.mrprivate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-Lof8jzTHkqlJfVxehrcqGM9yhLVcYz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
