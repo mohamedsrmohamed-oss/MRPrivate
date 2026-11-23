@@ -840,6 +840,15 @@ class MrPrivateState(val isPreviewMode: Boolean = false) {
                 )
             )
         }
+        if (slim.targetStudentIds.isNotEmpty()) {
+            pushSessionNotification(
+                teacherId = slim.teacherId,
+                slotId = slim.slotId,
+                title = "📝 اختبار جديد: ${slim.title}",
+                body = "أرسل لك المعلم ${slim.teacherName} اختباراً جديداً في مادة ${slim.subject}",
+                studentIds = slim.targetStudentIds
+            )
+        }
     }
 
     fun deleteQuizExam(quizId: String) {

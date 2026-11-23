@@ -634,7 +634,7 @@ B) Opt 2"""
                                         if (quizTitle.isBlank() || mins == null || mins <= 0 || maxScore == null || maxScore <= 0 || chosenSlot == null) {
                                             errorMsg = fillQuizErrorMsg
                                         } else {
-                                            val targetIds = chosenSlot.enrollments.filter { it.isConfirmed }.map { it.studentId }
+                                            val targetIds = chosenSlot.enrollments.map { it.studentId }.filter { it.isNotBlank() }.distinct()
                                             val newQuiz = QuizExam(
                                                 teacherId = teacher.id,
                                                 teacherName = teacher.fullName,

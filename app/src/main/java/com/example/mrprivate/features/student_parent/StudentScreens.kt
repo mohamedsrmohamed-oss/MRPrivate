@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import com.example.mrprivate.MrPrivateState
 import com.example.mrprivate.R
 import com.example.mrprivate.data.model.*
+import com.example.mrprivate.features.quiz.StudentTakeQuizDialog
+import com.example.mrprivate.features.quiz.SubjectEducationalLevelSection
 import com.example.mrprivate.services.StudentNotificationHelper
 import com.example.mrprivate.ui.components.*
 
@@ -47,6 +49,7 @@ fun StudentHomeScreen(
     var selectedTab by remember { mutableIntStateOf(-1) }
     var selectedDay by remember { mutableStateOf(getTodayDateKey()) }
     var showProfile by remember { mutableStateOf(false) }
+    var activeQuizToTake by remember { mutableStateOf<QuizExam?>(null) }
     val subjects = getSubjectsFor(student.educationTrack, student.stage)
     val scrollState = rememberScrollState()
 
@@ -122,6 +125,104 @@ fun StudentHomeScreen(
 
                     when (selectedTab) {
                         -1 -> {
+                            val studentSlotIds = remember(appState.schedules, student.id) {
+                                appState.schedules
+                                    .filter { slot -> slot.enrollments.any { it.studentId == student.id || (it.studentName.isNotBlank() && it.studentName == student.name) } }
+                                    .map { it.id }
+                                    .toSet()
+                            }
+                            val pendingQuizzes = appState.quizzes.filter { q ->
+                                val isTargeted = q.targetStudentIds.contains(student.id) || q.slotId in studentSlotIds
+                                isTargeted && !q.submissions.containsKey(student.id)
+                            }
+
+                            if (pendingQuizzes.isNotEmpty()) {
+                                Surface(
+                                    color = Color(0xFFFFFBEB),
+                                    shape = RoundedCornerShape(16.dp),
+                                    border = BorderStroke(1.5.dp, GoldStar),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 12.dp)
+                                        .shadow(3.dp, RoundedCornerShape(16.dp))
+                                ) {
+                                    Column(modifier = Modifier.padding(14.dp)) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Text("📝", fontSize = 18.sp)
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    text = tr("اختبارات بانتظار الحل (${pendingQuizzes.size})", "Pending Quizzes (${pendingQuizzes.size})"),
+                                                    fontWeight = FontWeight.Black,
+                                                    fontSize = 14.sp,
+                                                    color = Color(0xFF92400E)
+                                                )
+                                            }
+                                            Surface(
+                                                color = Color(0xFFFDE68A),
+                                                shape = RoundedCornerShape(10.dp)
+                                            ) {
+                                                Text(
+                                                    text = tr("مطلوب حله", "Action Required"),
+                                                    fontSize = 10.sp,
+                                                    fontWeight = FontWeight.Black,
+                                                    color = Color(0xFFB45309),
+                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                                )
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        pendingQuizzes.forEach { q ->
+                                            Surface(
+                                                color = PureWhite,
+                                                shape = RoundedCornerShape(12.dp),
+                                                border = BorderStroke(1.dp, Color(0xFFFCD34D)),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 3.dp)
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(10.dp),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Column(modifier = Modifier.weight(1f)) {
+                                                        Text(
+                                                            text = q.title,
+                                                            fontWeight = FontWeight.ExtraBold,
+                                                            fontSize = 13.sp,
+                                                            color = ElkhetaTextDark
+                                                        )
+                                                        Text(
+                                                            text = "${q.teacherName} • ${trValue(q.subject)} • ${q.durationMinutes} ${tr("دقيقة", "min")}",
+                                                            fontSize = 11.sp,
+                                                            color = ElkhetaTextGray
+                                                        )
+                                                    }
+                                                    Button(
+                                                        onClick = { activeQuizToTake = q },
+                                                        colors = ButtonDefaults.buttonColors(containerColor = DarkPurple),
+                                                        shape = RoundedCornerShape(10.dp),
+                                                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                                                    ) {
+                                                        Text(
+                                                            text = tr("ابدأ الكويز", "Start"),
+                                                            color = PureWhite,
+                                                            fontSize = 11.sp,
+                                                            fontWeight = FontWeight.Bold
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             StudentHeroHome(
                                 student = student,
                                 appState = appState,
@@ -218,6 +319,12 @@ fun StudentHomeScreen(
                                                     .background(accent)
                                             )
                                         }
+                                        SubjectEducationalLevelSection(
+                                            student = student,
+                                            subjectName = s,
+                                            appState = appState,
+                                            isStudentView = true
+                                        )
                                     }
                                 }
                             }
@@ -228,13 +335,26 @@ fun StudentHomeScreen(
                             StudentBookingsWithStatusBadges(
                                 student = student,
                                 allTeachers = appState.teachers,
-                                allSchedules = appState.schedules
+                                allSchedules = appState.schedules,
+                                appState = appState,
+                                onTakeQuiz = { activeQuizToTake = it }
                             )
                         }
                     }
                     Spacer(modifier = Modifier.height(18.dp))
                 }
             }
+        }
+
+        activeQuizToTake?.let { quiz ->
+            StudentTakeQuizDialog(
+                quiz = quiz,
+                student = student,
+                onDismiss = { activeQuizToTake = null },
+                onSubmitQuiz = { answers ->
+                    appState.submitStudentQuizAnswers(quiz, student, answers)
+                }
+            )
         }
     }
 }
@@ -243,7 +363,9 @@ fun StudentHomeScreen(
 fun StudentBookingsWithStatusBadges(
     student: StudentProfile,
     allTeachers: List<TeacherProfile>,
-    allSchedules: List<ScheduleSlot>
+    allSchedules: List<ScheduleSlot>,
+    appState: MrPrivateState? = null,
+    onTakeQuiz: ((QuizExam) -> Unit)? = null
 ) {
     val mySlots = allSchedules.filter { slot ->
         slot.enrollments.any { it.studentId == student.id || it.studentName == student.name }
@@ -333,6 +455,73 @@ fun StudentBookingsWithStatusBadges(
                             fontWeight = FontWeight.Bold,
                             color = ElkhetaTextGray
                         )
+                    }
+
+                    if (appState != null) {
+                        val slotQuizzes = appState.quizzes.filter { it.slotId == slot.id }
+                        if (slotQuizzes.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            HorizontalDivider(color = ElkhetaInputBorder.copy(alpha = 0.6f), thickness = 0.8.dp)
+                            Text(
+                                text = tr("📝 اختبارات هذه المجموعة (${slotQuizzes.size}):", "📝 Group Quizzes (${slotQuizzes.size}):"),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = DarkPurple
+                            )
+                            slotQuizzes.forEach { q ->
+                                val sub = q.submissions[student.id]
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 3.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = q.title,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 12.sp,
+                                            color = ElkhetaTextDark
+                                        )
+                                        Text(
+                                            text = if (sub != null) "${tr("تم التسليم", "Submitted")}: ${sub.score}/${sub.totalScore}" else tr("لم يتم الحل بعد ⏳", "Pending ⏳"),
+                                            fontSize = 10.sp,
+                                            color = if (sub != null) Color(0xFF15803D) else Color(0xFFB45309),
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
+                                    if (sub == null && onTakeQuiz != null) {
+                                        Button(
+                                            onClick = { onTakeQuiz(q) },
+                                            colors = ButtonDefaults.buttonColors(containerColor = DarkPurple),
+                                            shape = RoundedCornerShape(8.dp),
+                                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                                        ) {
+                                            Text(
+                                                text = tr("حل الآن", "Take Quiz"),
+                                                color = PureWhite,
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    } else if (sub != null) {
+                                        Surface(
+                                            color = Color(0xFFDCFCE7),
+                                            shape = RoundedCornerShape(6.dp)
+                                        ) {
+                                            Text(
+                                                text = "✓ ${sub.score}/${sub.totalScore}",
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Black,
+                                                color = Color(0xFF15803D),
+                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

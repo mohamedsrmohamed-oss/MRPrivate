@@ -97,12 +97,16 @@ fun SubjectEducationalLevelSection(
 
     // جلب جميع الكويزات المرسلة لمجموعة هذا الطالب في هذه المادة
     val studentEnrolledSlotIds = appState.schedules
-        .filter { slot -> slot.enrollments.any { it.studentId == student.id && it.isConfirmed } }
+        .filter { slot -> slot.enrollments.any { it.studentId == student.id || (it.studentName.isNotBlank() && it.studentName == student.name) } }
         .map { it.id }
         .toSet()
 
     val subjectQuizzes = appState.quizzes.filter { q ->
-        val sameSubj = normalizeSubjectAr(q.subject) == normalizeSubjectAr(subjectName) || q.subject.equals(subjectName, ignoreCase = true)
+        val s1 = normalizeSubjectAr(q.subject).trim()
+        val s2 = normalizeSubjectAr(subjectName).trim()
+        val sameSubj = s1.equals(s2, ignoreCase = true) ||
+            s1.contains(s2, ignoreCase = true) ||
+            s2.contains(s1, ignoreCase = true)
         val targetedToStudent = q.targetStudentIds.contains(student.id) || q.slotId in studentEnrolledSlotIds || q.submissions.containsKey(student.id)
         sameSubj && targetedToStudent
     }

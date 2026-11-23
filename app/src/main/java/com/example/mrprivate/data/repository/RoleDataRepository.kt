@@ -370,7 +370,7 @@ class RoleDataRepository(
 
     /** معلمو المواعيد المحجوزة: نجلب ملفاتهم (مرة واحدة) ونراقب كويزاتهم فقط */
     private fun onSlotsChanged() {
-        val teacherIds = slotTeacher.values.filter { it.isNotBlank() }.toSet()
+        val teacherIds = (slotTeacher.values + state.schedules.map { it.teacherId }).filter { it.isNotBlank() }.toSet()
         fetchTeachersOnce(teacherIds)
         teacherIds.forEach { tid ->
             val key = "s:quiz:$tid"
