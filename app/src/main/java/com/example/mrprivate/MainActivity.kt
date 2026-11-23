@@ -7,7 +7,11 @@ import com.example.mrprivate.data.repository.RoleDataRepository
 import com.example.mrprivate.data.repository.parseAdminSnapshot
 import com.example.mrprivate.data.repository.parseStudentSnapshot
 import com.example.mrprivate.data.repository.parseTeacherSnapshot
+import com.example.mrprivate.features.admin.*
+import com.example.mrprivate.features.auth.*
 import com.example.mrprivate.features.quiz.*
+import com.example.mrprivate.features.student_parent.*
+import com.example.mrprivate.features.teacher.*
 import com.example.mrprivate.services.uriToResizedBase64
 import com.example.mrprivate.ui.components.*
 import android.content.Context

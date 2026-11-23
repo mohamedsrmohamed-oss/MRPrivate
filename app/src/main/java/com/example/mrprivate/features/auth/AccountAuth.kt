@@ -1,6 +1,8 @@
-package com.example.mrprivate
+package com.example.mrprivate.features.auth
 
 import androidx.compose.runtime.Composable
+import com.example.mrprivate.MrPrivateApp
+import com.example.mrprivate.tr
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
