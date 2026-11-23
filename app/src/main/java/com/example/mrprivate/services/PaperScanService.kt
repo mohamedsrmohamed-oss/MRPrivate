@@ -1,4 +1,4 @@
-package com.example.mrprivate
+package com.example.mrprivate.services
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
+import com.example.mrprivate.PaperScanResult
+import com.example.mrprivate.QuizQuestion
+import com.example.mrprivate.parseRawTextIntoQuestions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

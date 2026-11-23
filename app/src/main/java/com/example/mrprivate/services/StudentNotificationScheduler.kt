@@ -1,4 +1,4 @@
-package com.example.mrprivate
+package com.example.mrprivate.services
 
 import android.app.AlarmManager
 import android.app.NotificationChannel
@@ -9,6 +9,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.example.mrprivate.MainActivity
+import com.example.mrprivate.ScheduleSlot
+import com.example.mrprivate.StudentProfile
+import com.example.mrprivate.TeacherProfile
+import com.example.mrprivate.formatHour12
+import com.example.mrprivate.getTodayDateKey
+import com.example.mrprivate.isBreakValue
+import com.example.mrprivate.slotHourKey
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

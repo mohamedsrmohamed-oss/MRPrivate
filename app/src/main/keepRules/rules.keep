@@ -4,9 +4,10 @@
 # For more details, see
 #   https://d.android.com/r/tools/r8/keep-rules
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep Firebase Realtime Database data models and reflection
+-keepclassmembers class com.example.mrprivate.** {
+    <fields>;
+    <init>(...);
+}
+-keep class com.example.mrprivate.services.** { *; }
+-keep class com.example.mrprivate.data.** { *; }

@@ -1,6 +1,12 @@
-package com.example.mrprivate
+package com.example.mrprivate.data.repository
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.example.mrprivate.AdminAccount
+import com.example.mrprivate.MrPrivateState
+import com.example.mrprivate.QuizExam
+import com.example.mrprivate.ScheduleSlot
+import com.example.mrprivate.StudentProfile
+import com.example.mrprivate.TeacherProfile
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase

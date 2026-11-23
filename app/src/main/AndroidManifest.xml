@@ -42,7 +42,7 @@
 
         <!-- مستقبل إشعارات الجدول الصباحي والتذكير قبل الحصة بساعة (يعمل حتى عند إغلاق التطبيق) -->
         <receiver
-            android:name=".StudentSessionAlarmReceiver"
+            android:name="com.example.mrprivate.services.StudentSessionAlarmReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

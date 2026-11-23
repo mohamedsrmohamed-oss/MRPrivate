@@ -2,6 +2,12 @@
 
 package com.example.mrprivate
 
+import com.example.mrprivate.data.repository.LoginResult
+import com.example.mrprivate.data.repository.RoleDataRepository
+import com.example.mrprivate.data.repository.parseAdminSnapshot
+import com.example.mrprivate.data.repository.parseStudentSnapshot
+import com.example.mrprivate.data.repository.parseTeacherSnapshot
+import com.example.mrprivate.services.uriToResizedBase64
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
