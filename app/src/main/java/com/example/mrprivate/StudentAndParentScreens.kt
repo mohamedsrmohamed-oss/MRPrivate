@@ -703,7 +703,7 @@ fun TeacherScheduleForStudentScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(schedules) { slot ->
+                items(schedules, key = { it.id }) { slot ->
                     val existingBooking = slot.enrollments.find { it.studentId == student.id }
                     val isFull = slot.enrollments.size >= slot.maxStudents
                     val typeText = if (slot.isPrivate) tr("برايفت", "Private") else tr("جروب (${slot.enrollments.size}/${slot.maxStudents})", "Group (${slot.enrollments.size}/${slot.maxStudents})")

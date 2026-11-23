@@ -1,0 +1,93 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "phone_index": {
+      "$phone": {
+        ".read": true,
+        ".write": "auth != null && !data.exists()",
+        ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 64"
+      }
+    },
+
+    "admins": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).exists()",
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || root.child('admins').child(auth.uid).exists())",
+        ".write": "auth != null && root.child('admins').child(auth.uid).child('canManageAdmins').val() == true"
+      }
+    },
+
+    "settings": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
+    },
+
+    "teachers": {
+      ".indexOn": ["isApproved", "username"],
+      ".read": "auth != null && (root.child('admins').child(auth.uid).exists() || (query.orderByChild == 'isApproved' && query.equalTo == true))",
+      "$tid": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.uid == $tid || root.child('admins').child(auth.uid).exists())",
+        ".validate": "root.child('admins').child(auth.uid).exists() || ((newData.child('isApproved').val() == true) == (data.child('isApproved').val() == true) && (newData.child('isPremium').val() == true) == (data.child('isPremium').val() == true))"
+      }
+    },
+
+    "students": {
+      ".indexOn": ["parentId"],
+      ".read": "auth != null && (root.child('admins').child(auth.uid).exists() || (query.orderByChild == 'parentId' && query.equalTo == auth.uid))",
+      "$sid": {
+        ".read": "auth != null && (auth.uid == $sid || data.child('parentId').val() == auth.uid || root.child('admins').child(auth.uid).exists() || root.child('teacher_students').child(auth.uid).child($sid).exists() || root.child('students').child(auth.uid).child('parentId').val() == $sid)",
+        ".write": "auth != null && (auth.uid == $sid || data.child('parentId').val() == auth.uid || (!data.exists() && newData.child('parentId').val() == auth.uid) || root.child('admins').child(auth.uid).exists() || root.child('teacher_students').child(auth.uid).child($sid).exists())",
+        ".validate": "root.child('admins').child(auth.uid).exists() || newData.child('canAddStudentApproved').val() != true || data.child('canAddStudentApproved').val() == true"
+      }
+    },
+
+    "schedules": {
+      ".indexOn": ["teacherId"],
+      ".read": "auth != null && (root.child('admins').child(auth.uid).exists() || query.orderByChild == 'teacherId')",
+      "$slotId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (root.child('admins').child(auth.uid).exists() || (newData.exists() && (data.exists() || newData.child('teacherId').val() == auth.uid)) || (!newData.exists() && data.child('teacherId').val() == auth.uid))",
+        ".validate": "!data.exists() || newData.child('teacherId').val() == data.child('teacherId').val()"
+      }
+    },
+
+    "student_slots": {
+      "$studentId": {
+        ".read": "auth != null && (auth.uid == $studentId || root.child('students').child($studentId).child('parentId').val() == auth.uid || root.child('admins').child(auth.uid).exists())",
+        ".write": "auth != null && (auth.uid == $studentId || root.child('students').child($studentId).child('parentId').val() == auth.uid || root.child('admins').child(auth.uid).exists() || root.child('teachers').child(auth.uid).exists())"
+      }
+    },
+
+    "teacher_students": {
+      "$teacherId": {
+        ".read": "auth != null && (auth.uid == $teacherId || root.child('admins').child(auth.uid).exists())",
+        "$studentId": {
+          ".write": "auth != null && (auth.uid == $teacherId || auth.uid == $studentId || root.child('students').child($studentId).child('parentId').val() == auth.uid || root.child('admins').child(auth.uid).exists())"
+        }
+      }
+    },
+
+    "quizzes": {
+      ".indexOn": ["teacherId"],
+      ".read": "auth != null && (root.child('admins').child(auth.uid).exists() || query.orderByChild == 'teacherId')",
+      "$qid": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+
+    "quiz_papers": {
+      ".indexOn": ["expiresAt"],
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+
+    "notifications": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

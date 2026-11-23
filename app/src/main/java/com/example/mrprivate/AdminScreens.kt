@@ -136,77 +136,95 @@ fun AdminDashboardScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            ScrollableTabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = PureWhite,
-                contentColor = DarkPurple,
-                edgePadding = 16.dp
-            ) {
-                val tabTitles = mutableListOf(
-                    tr("طلبات الانضمام (${pendingTeachers.size})", "Join Requests (${pendingTeachers.size})"),
-                    tr("المعلمون (${allTeachers.size})", "Teachers (${allTeachers.size})"),
-                    tr("المواعيد (${allSchedules.size})", "Schedules (${allSchedules.size})"),
-                    tr("المستخدمون (${allStudents.size})", "Users (${allStudents.size})")
-                )
-                if (currentAdmin.canManageAdmins) {
-                    tabTitles.add(tr("المديرون (${allAdmins.size})", "Admins (${allAdmins.size})"))
-                }
-                tabTitles.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = { Text(title, fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal) }
-                    )
-                }
-            }
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text(tr("البحث برقم الهاتف أو الاسم أو اليوزر...", "Search by phone, name, or username...")) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = DarkPurple) },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { searchQuery = "" }) { Icon(Icons.Default.Clear, contentDescription = null, tint = Color.Gray) }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
 
-            if (selectedTab in 0..3) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = { Text(tr("بحث بالاسم، رقم التليفون، أو اليوزر...", "Search by name, phone or username...")) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = DarkPurple) },
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
-                )
+            ScrollableTabRow(selectedTabIndex = selectedTab, containerColor = MediumPurple, contentColor = PureWhite, edgePadding = 8.dp) {
+                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(tr("طلبات (${filteredPendingTeachers.size})", "Pending (${filteredPendingTeachers.size})"), fontWeight = FontWeight.Bold) })
+                Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(tr("المعلمين (${filteredAllTeachers.size})", "Teachers (${filteredAllTeachers.size})"), fontWeight = FontWeight.Bold) })
+                Tab(selected = selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(tr("المواعيد (${allSchedules.size})", "Schedules (${allSchedules.size})"), fontWeight = FontWeight.Bold) })
+                Tab(selected = selectedTab == 3, onClick = { selectedTab = 3 }, text = { Text(tr("الطلاب (${filteredAllStudents.size})", "Students (${filteredAllStudents.size})"), fontWeight = FontWeight.Bold) })
+                if (currentAdmin.canManageAdmins) {
+                    Tab(selected = selectedTab == 4, onClick = { selectedTab = 4 }, text = { Text(tr("الأدمن (${allAdmins.size})", "Admins (${allAdmins.size})"), fontWeight = FontWeight.Bold) })
+                }
             }
 
             when (selectedTab) {
                 0 -> {
-                    if (filteredPendingTeachers.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(tr("لا توجد طلبات انضمام جديدة معلقة", "No pending join requests"), color = ElkhetaTextGray)
-                        }
-                    } else {
-                        LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            items(filteredPendingTeachers) { teacher ->
-                                AppCard(modifier = Modifier.fillMaxWidth()) {
-                                    Column(modifier = Modifier.padding(16.dp)) {
-                                        Text("${teacher.fullName} (${trValue(teacher.educationTrack)})", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = DarkPurple)
-                                        Text("${tr("المادة:", "Subject:")} ${trValue(teacher.subject)}", fontSize = 14.sp)
-                                        val isArabic = LocalIsArabic.current
-                                        Text("${tr("المراحل:", "Stages:")} ${teacher.stages.joinToString { trValue(it, isArabic) }}", fontSize = 13.sp, color = ElkhetaTextGray)
-                                        Text("${tr("المحافظة:", "Gov:")} ${trValue(teacher.governorate)} - ${trValue(teacher.area)}", fontSize = 13.sp, color = ElkhetaTextGray)
-                                        Text("${tr("التليفون:", "Phone:")} ${teacher.phone} | ${tr("اليوزر:", "User:")} ${teacher.username}", fontSize = 13.sp, color = ElkhetaTextGray)
-                                        Spacer(modifier = Modifier.height(10.dp))
-                                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                            Button(
-                                                onClick = { onApproveTeacher(teacher.id) },
-                                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)),
-                                                modifier = Modifier.weight(1f)
-                                            ) {
-                                                Text(tr("قبول وتفعيل", "Approve"), color = PureWhite)
+                    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(filteredPendingTeachers, key = { it.id }) { teacher ->
+                            val context = LocalContext.current
+                            AppCard(modifier = Modifier.fillMaxWidth().border(1.dp, DarkPurple, RoundedCornerShape(12.dp))) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text("${teacher.fullName} (${trValue(teacher.educationTrack)})", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = DarkPurple)
+                                    Text("اليوزر: ${teacher.username} | المادة: ${trValue(teacher.subject)} | المنطقة: ${trValue(teacher.area)}", fontSize = 13.sp)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).background(LightPurple.copy(alpha = 0.4f), RoundedCornerShape(8.dp)).padding(8.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(tr("تليفون المعلم: ${teacher.phone}", "Phone: ${teacher.phone}"), fontWeight = FontWeight.Bold, fontSize = 13.sp, color = DarkPurple)
+                                        Button(
+                                            onClick = { openTeacherWhatsAppForAdmin(context, teacher.phone, teacher.fullName) },
+                                            colors = ButtonDefaults.buttonColors(containerColor = WhatsAppGreen),
+                                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                            modifier = Modifier.height(32.dp)
+                                        ) {
+                                            Text(tr("تواصل واتساب", "WhatsApp"), color = PureWhite, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                        }
+                                    }
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        val termMillis = 120L * 24 * 60 * 60 * 1000
+                                        Checkbox(
+                                            checked = teacher.effectiveIsPremium,
+                                            onCheckedChange = { checked ->
+                                                val now = System.currentTimeMillis()
+                                                onUpdateTeacher(
+                                                    teacher.copy(
+                                                        isPremium = checked,
+                                                        isUltimate = if (!checked) false else teacher.isUltimate,
+                                                        subscriptionActivatedAtMillis = if (checked) now else 0L,
+                                                        subscriptionExpiresAtMillis = if (checked) now + termMillis else 0L
+                                                    )
+                                                )
                                             }
-                                            if (canDelete) {
-                                                OutlinedButton(
-                                                    onClick = { onDeleteTeacher(teacher.id) },
-                                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
-                                                    modifier = Modifier.weight(1f)
-                                                ) {
-                                                    Text(tr("رفض وحذف", "Reject"))
-                                                }
+                                        )
+                                        Text(tr("بريميوم (Premium)", "Premium"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = DarkPurple)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Checkbox(
+                                            checked = teacher.effectiveIsUltimate,
+                                            onCheckedChange = { checked ->
+                                                val now = System.currentTimeMillis()
+                                                onUpdateTeacher(
+                                                    teacher.copy(
+                                                        isUltimate = checked,
+                                                        isPremium = if (checked) true else teacher.isPremium,
+                                                        subscriptionActivatedAtMillis = if (checked) now else teacher.subscriptionActivatedAtMillis,
+                                                        subscriptionExpiresAtMillis = if (checked) now + termMillis else teacher.subscriptionExpiresAtMillis
+                                                    )
+                                                )
                                             }
+                                        )
+                                        Text(tr("اشتراك شامل (Ultimate)", "Ultimate"), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MrRedPrimary)
+                                    }
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Button(onClick = { onApproveTeacher(teacher.id) }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)), modifier = Modifier.weight(1f)) {
+                                            Text(tr("قبول ورفع البروفايل", "Approve"), color = PureWhite, fontSize = 13.sp)
+                                        }
+                                        OutlinedButton(onClick = { teacherToEdit = teacher }) { Text(tr("تعديل", "Edit"), color = DarkPurple) }
+                                        if (canDelete) {
+                                            IconButton(onClick = { onDeleteTeacher(teacher.id) }) { Icon(Icons.Default.Delete, contentDescription = null, tint = Color.Red) }
                                         }
                                     }
                                 }
@@ -216,7 +234,7 @@ fun AdminDashboardScreen(
                 }
                 1 -> {
                     LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(filteredAllTeachers) { teacher ->
+                        items(filteredAllTeachers, key = { it.id }) { teacher ->
                             val context = LocalContext.current
                             AppCard(modifier = Modifier.fillMaxWidth()) {
                                 Column(modifier = Modifier.padding(16.dp)) {
@@ -232,24 +250,55 @@ fun AdminDashboardScreen(
                                             }
                                         }
                                     }
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                        Text("⭐ ${String.format(Locale.US, "%.1f", teacher.averageRating)}", fontWeight = FontWeight.Bold, color = GoldStar)
-                                        Text("(${teacher.ratings.size} ${tr("تقييم", "reviews")})", fontSize = 12.sp, color = ElkhetaTextGray)
-                                        Spacer(modifier = Modifier.weight(1f))
-                                        TextButton(onClick = {
-                                            val uri = Uri.parse("https://wa.me/2${teacher.phone}")
-                                            context.startActivity(Intent(Intent.ACTION_VIEW, uri))
-                                        }) {
-                                            Text(tr("واتساب المعلم", "WhatsApp"), color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).background(LightPurple.copy(alpha = 0.35f), RoundedCornerShape(8.dp)).padding(8.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(tr("تليفون: ${teacher.phone}", "Phone: ${teacher.phone}"), fontWeight = FontWeight.Bold, fontSize = 12.sp, color = DarkPurple)
+                                        Button(
+                                            onClick = { openTeacherWhatsAppForAdmin(context, teacher.phone, teacher.fullName) },
+                                            colors = ButtonDefaults.buttonColors(containerColor = WhatsAppGreen),
+                                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                                            modifier = Modifier.height(30.dp)
+                                        ) {
+                                            Text(tr("واتساب", "WhatsApp"), color = PureWhite, fontSize = 11.sp)
                                         }
                                     }
                                     Row(verticalAlignment = Alignment.CenterVertically) {
+                                        val termMillis = 120L * 24 * 60 * 60 * 1000
                                         Checkbox(
-                                            checked = teacher.isApproved,
-                                            onCheckedChange = { onUpdateTeacher(teacher.copy(isApproved = it)) }
+                                            checked = teacher.effectiveIsPremium,
+                                            onCheckedChange = { checked ->
+                                                val now = System.currentTimeMillis()
+                                                onUpdateTeacher(
+                                                    teacher.copy(
+                                                        isPremium = checked,
+                                                        isUltimate = if (!checked) false else teacher.isUltimate,
+                                                        subscriptionActivatedAtMillis = if (checked) now else 0L,
+                                                        subscriptionExpiresAtMillis = if (checked) now + termMillis else 0L
+                                                    )
+                                                )
+                                            }
                                         )
-                                        Text(if (teacher.isApproved) tr("الحساب مفعّل ونشط", "Active") else tr("الحساب معطّل", "Disabled"), fontSize = 13.sp)
+                                        Text(tr("بريميوم (Premium)", "Premium"), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = DarkPurple)
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Checkbox(
+                                            checked = teacher.effectiveIsUltimate,
+                                            onCheckedChange = { checked ->
+                                                val now = System.currentTimeMillis()
+                                                onUpdateTeacher(
+                                                    teacher.copy(
+                                                        isUltimate = checked,
+                                                        isPremium = if (checked) true else teacher.isPremium,
+                                                        subscriptionActivatedAtMillis = if (checked) now else teacher.subscriptionActivatedAtMillis,
+                                                        subscriptionExpiresAtMillis = if (checked) now + termMillis else teacher.subscriptionExpiresAtMillis
+                                                    )
+                                                )
+                                            }
+                                        )
+                                        Text(tr("اشتراك شامل", "Ultimate"), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MrRedPrimary)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        StarRatingBar(rating = teacher.averageRating, count = teacher.ratings.size, darkText = true)
                                     }
                                 }
                             }
@@ -257,70 +306,23 @@ fun AdminDashboardScreen(
                     }
                 }
                 2 -> {
-                    val schedulesToShow = if (cleanQuery.isBlank()) allSchedules else allSchedules.filter { slot ->
-                        val teacher = allTeachers.find { it.id == slot.teacherId }
-                        slot.day.lowercase().contains(cleanQuery) || slot.time.lowercase().contains(cleanQuery) || (teacher?.fullName?.lowercase()?.contains(cleanQuery) == true)
-                    }
                     LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(schedulesToShow) { slot ->
-                            val teacher = allTeachers.find { it.id == slot.teacherId }
-                            val confirmedCount = slot.enrollments.count { it.isConfirmed }
-                            val pendingCount = slot.enrollments.size - confirmedCount
+                        items(allSchedules, key = { it.id }) { slot ->
+                            val slotTeacher = allTeachers.find { it.id == slot.teacherId }
+                            val typeText = if (slot.isPrivate) tr("برايفت", "Private") else tr("جروب (${slot.enrollments.size}/${slot.maxStudents})", "Group (${slot.enrollments.size}/${slot.maxStudents})")
+                            val locText = if (slot.isOnline) tr("أونلاين", "Online") else tr("حضوري", "Offline")
                             AppCard(modifier = Modifier.fillMaxWidth()) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text("${slot.day} - ${slot.time}", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = DarkPurple)
-                                            Text(
-                                                text = "${tr("المعلم:", "Teacher:")} ${teacher?.fullName ?: tr("غير معروف", "Unknown")}",
-                                                fontSize = 13.sp,
-                                                color = ElkhetaTextGray
-                                            )
-                                            Text(
-                                                text = "${slot.price} ج.م | ${if (slot.isOnline) tr("أونلاين", "Online") else tr("حضوري", "Offline")}",
-                                                fontSize = 13.sp
-                                            )
-                                            Text(
-                                                text = tr("الطلاب: $confirmedCount مؤكد - $pendingCount بانتظار التأكيد", "Students: $confirmedCount confirmed - $pendingCount pending"),
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = if (pendingCount > 0) Color(0xFFE65100) else Color(0xFF2E7D32)
-                                            )
+                                        Column {
+                                            Text(slotTeacher?.fullName ?: "معلم", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = DarkPurple)
+                                            Text("${trValue(slot.day)} - ${slot.time} ($typeText - $locText)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                            Text("السعر: ${slot.price} جنيه | تكرار سنوي (36 أسبوع)", fontSize = 12.sp, color = MediumPurple)
                                         }
                                         Row {
                                             IconButton(onClick = { scheduleToEdit = slot }) { Icon(Icons.Default.Edit, contentDescription = null, tint = DarkPurple) }
                                             if (canDelete) {
                                                 IconButton(onClick = { onDeleteSchedule(slot.id) }) { Icon(Icons.Default.Delete, contentDescription = null, tint = Color.Red) }
-                                            }
-                                        }
-                                    }
-                                    if (slot.enrollments.isNotEmpty()) {
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Text(tr("قائمة الحجوزات:", "Enrollments:"), fontWeight = FontWeight.Bold, fontSize = 12.sp, color = DarkPurple)
-                                        slot.enrollments.forEach { enrollment ->
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text("• ${enrollment.studentName} (${enrollment.studentPhone})", fontSize = 12.sp)
-                                                    if (enrollment.parentName.isNotBlank()) {
-                                                        Text("  ${tr("ولي الأمر:", "Parent:")} ${enrollment.parentName} (${enrollment.parentPhone})", fontSize = 11.sp, color = ElkhetaTextGray)
-                                                    }
-                                                }
-                                                if (!enrollment.isConfirmed) {
-                                                    Button(
-                                                        onClick = { onConfirmStudentBooking(slot, enrollment.id) },
-                                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)),
-                                                        shape = RoundedCornerShape(8.dp),
-                                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
-                                                    ) {
-                                                        Text(tr("تأكيد", "Confirm"), fontSize = 11.sp, color = PureWhite)
-                                                    }
-                                                } else {
-                                                    Text(tr("✓ مؤكد", "✓ Confirmed"), fontSize = 11.sp, color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
-                                                }
                                             }
                                         }
                                     }
@@ -330,13 +332,13 @@ fun AdminDashboardScreen(
                     }
                 }
                 3 -> {
-                    val shownParents = filteredAllStudents.filter { it.isParent }
-                    val orphans = filteredAllStudents.filter { !it.isParent && it.parentId.isBlank() }
-                    fun childrenOf(p: StudentProfile, list: List<StudentProfile>): List<StudentProfile> =
-                        list.filter { !it.isParent && (it.parentId == p.id || (p.linkedStudentUsername.isNotBlank() && it.username == p.linkedStudentUsername)) }
-
+                    val matchedIds = filteredAllStudents.map { it.id }.toSet()
+                    val parentsAll = allStudents.filter { it.isParent }
+                    val shownParents = parentsAll.filter { p -> p.id in matchedIds || childrenOf(p, allStudents).any { it.id in matchedIds } }
+                    val linkedChildIds = parentsAll.flatMap { p -> childrenOf(p, allStudents).map { it.id } }.toSet()
+                    val orphans = filteredAllStudents.filter { !it.isParent && it.id !in linkedChildIds }
                     LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(shownParents) { parentSt ->
+                        items(shownParents, key = { it.id }) { parentSt ->
                             val kids = childrenOf(parentSt, allStudents)
                             val expanded = parentSt.id in expandedParents
                             AppCard(modifier = Modifier.fillMaxWidth()) {
@@ -391,7 +393,7 @@ fun AdminDashboardScreen(
                         }
                         if (orphans.isNotEmpty()) {
                             item { Text(tr("طلاب بدون ولي أمر", "Students without a parent"), fontWeight = FontWeight.ExtraBold, color = ElkhetaTextGray) }
-                            items(orphans) { student ->
+                            items(orphans, key = { it.id }) { student ->
                                 AppCard(modifier = Modifier.fillMaxWidth()) {
                                     Row(modifier = Modifier.padding(16.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                         Column(modifier = Modifier.weight(1f)) {
@@ -418,7 +420,7 @@ fun AdminDashboardScreen(
                             }
                             Spacer(modifier = Modifier.height(10.dp))
                             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                                items(allAdmins) { adminItem ->
+                                items(allAdmins, key = { it.id }) { adminItem ->
                                     AppCard(modifier = Modifier.fillMaxWidth()) {
                                         Column(modifier = Modifier.padding(14.dp)) {
                                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {

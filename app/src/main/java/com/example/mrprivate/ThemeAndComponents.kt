@@ -618,10 +618,34 @@ fun decodeBase64ToBitmap(base64Str: String): android.graphics.Bitmap? {
     } catch (e: Exception) { null }
 }
 
-fun loadBitmapFromUriOrBase64(context: Context, photoStr: String): android.graphics.Bitmap? {
+/** كاش صغير (حوالي 6MB) للصور الشخصية المفكوكة، فلا تُفك من Base64 عند كل إعادة تركيب أو تدوير شاشة. */
+private val avatarBitmapCache = object : android.util.LruCache<Pair<String, Int>, android.graphics.Bitmap>(6 * 1024) {
+    override fun sizeOf(key: Pair<String, Int>, value: android.graphics.Bitmap): Int = value.byteCount / 1024
+}
+
+/** يفك Base64 بدقة قريبة من الحجم المعروض فقط (inSampleSize) بدل فك الصورة بحجمها الكامل. */
+private fun decodeBase64ToBitmapSampled(base64Str: String, targetPx: Int): android.graphics.Bitmap? {
+    return try {
+        val bytes = android.util.Base64.decode(base64Str, android.util.Base64.DEFAULT)
+        val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+        var sample = 1
+        while (minOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= targetPx) sample *= 2
+        val opts = android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
+        android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
+    } catch (e: Exception) { null } catch (e: OutOfMemoryError) { null }
+}
+
+fun loadBitmapFromUriOrBase64(context: Context, photoStr: String, targetPx: Int = 384): android.graphics.Bitmap? {
     if (photoStr.isBlank()) return null
-    val fromBase64 = decodeBase64ToBitmap(photoStr)
-    if (fromBase64 != null) return fromBase64
+    val cacheKey = photoStr to targetPx
+    avatarBitmapCache.get(cacheKey)?.let { return it }
+    val fromBase64 = decodeBase64ToBitmapSampled(photoStr, targetPx)
+    if (fromBase64 != null) {
+        avatarBitmapCache.put(cacheKey, fromBase64)
+        return fromBase64
+    }
     return try {
         val uri = photoStr.toUri()
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -640,7 +664,8 @@ fun ProfileAvatar(
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let { onPhotoChange?.invoke(it) }
     }
-    val bitmap = remember(photoUriString) { loadBitmapFromUriOrBase64(context, photoUriString) }
+    val avatarTargetPx = (size * androidx.compose.ui.platform.LocalDensity.current.density).toInt().coerceAtLeast(64)
+    val bitmap = remember(photoUriString, avatarTargetPx) { loadBitmapFromUriOrBase64(context, photoUriString, avatarTargetPx) }
 
     Box(
         modifier = Modifier

@@ -512,12 +512,12 @@ fun autoDistributeSubjectPlanOnTimetable(
     return result
 }
 
-fun uriToBase64(context: Context, uri: Uri): String {
-    return try {
-        val bytes = context.contentResolver.openInputStream(uri)?.readBytes() ?: return ""
-        android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
-    } catch (e: Exception) { "" }
-}
+/** الصور الشخصية: أطول ضلع 320px وجودة 70 بصيغة WebP (بدل تخزين بايتات الصورة الأصلية كاملة في قاعدة البيانات). */
+const val PROFILE_PHOTO_MAX_SIDE_PX = 320
+const val PROFILE_PHOTO_QUALITY = 70
+
+fun uriToBase64(context: Context, uri: Uri): String =
+    uriToResizedBase64(context, uri, maxSide = PROFILE_PHOTO_MAX_SIDE_PX, quality = PROFILE_PHOTO_QUALITY, webp = true)
 
 fun openPlatformSupportWhatsApp(context: Context) {
     val supportNumber = "+201118721114"

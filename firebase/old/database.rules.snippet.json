@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "quiz_papers": {
+      ".indexOn": ["expiresAt"],
+      "$quizId": {
+        ".read": "data.child('expiresAt').val() > now",
+        ".write": true
+      }
+    }
+  }
+}

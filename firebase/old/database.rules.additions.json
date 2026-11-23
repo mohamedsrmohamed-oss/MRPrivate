@@ -1,0 +1,15 @@
+{
+  "_note": "دمج يدوي مع قواعدك الحالية في Firebase Console (لا تستبدل القواعد كلها بهذا الملف)",
+  "rules": {
+    "student_slots": {
+      "$studentId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "students": { ".indexOn": ["parentId", "username", "phone"] },
+    "teachers": { ".indexOn": ["isApproved", "username"] },
+    "schedules": { ".indexOn": ["teacherId"] },
+    "quizzes": { ".indexOn": ["teacherId"] }
+  }
+}
