@@ -56,17 +56,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.mrprivate.LocalIsArabic
 import com.example.mrprivate.MrPrivateState
 import com.example.mrprivate.R
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.StudentEnrollment
-import com.example.mrprivate.StudentProfile
-import com.example.mrprivate.TeacherProfile
-import com.example.mrprivate.getTodayDateKey
-import com.example.mrprivate.slotHourKey
-import com.example.mrprivate.tr
-import com.example.mrprivate.trValue
+import com.example.mrprivate.data.model.*
 import kotlinx.coroutines.delay
 import java.util.Calendar
 

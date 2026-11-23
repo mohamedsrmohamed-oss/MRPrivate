@@ -3,9 +3,8 @@
 package com.example.mrprivate.features.quiz
 
 import android.graphics.Bitmap
-import com.example.mrprivate.QuizQuestion
-import com.example.mrprivate.arabicSubjects
-import com.example.mrprivate.languageSubjects
+import com.example.mrprivate.data.model.*
+import com.example.mrprivate.ui.components.*
 import java.io.ByteArrayOutputStream
 
 // ==================== محرك الذكاء الاصطناعي وتحليل ورق الأسئلة (AI Vision & Smart Parser) ====================

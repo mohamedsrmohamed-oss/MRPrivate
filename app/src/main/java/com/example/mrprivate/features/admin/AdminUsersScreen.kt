@@ -21,13 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mrprivate.AdminAccount
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.StudentProfile
-import com.example.mrprivate.TeacherProfile
-import com.example.mrprivate.openTeacherWhatsAppForAdmin
-import com.example.mrprivate.tr
-import com.example.mrprivate.trValue
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.ui.components.*
 
 internal fun adminChildrenOf(parent: StudentProfile, all: List<StudentProfile>): List<StudentProfile> =

@@ -22,21 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.mrprivate.AdminAccount
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.StudentProfile
-import com.example.mrprivate.TeacherProfile
-import com.example.mrprivate.TermSettings
-import com.example.mrprivate.daysOfWeek
-import com.example.mrprivate.educationTracks
-import com.example.mrprivate.educationalStages
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.features.auth.AccountAuth
 import com.example.mrprivate.features.auth.AuthError
 import com.example.mrprivate.features.auth.rememberAuthErrorTexts
-import com.example.mrprivate.getSubjectsByTrack
-import com.example.mrprivate.getSubjectsFor
-import com.example.mrprivate.governoratesWithAreas
-import com.example.mrprivate.tr
 import com.example.mrprivate.ui.components.*
 import java.util.Locale
 

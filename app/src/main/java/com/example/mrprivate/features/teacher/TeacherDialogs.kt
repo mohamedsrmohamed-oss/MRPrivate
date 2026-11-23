@@ -26,13 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.mrprivate.MrPrivateState
-import com.example.mrprivate.QuizExam
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.TeacherProfile
-import com.example.mrprivate.daysOfWeek
-import com.example.mrprivate.educationalStages
-import com.example.mrprivate.stageGradesMap
-import com.example.mrprivate.tr
+import com.example.mrprivate.data.model.QuizExam
+import com.example.mrprivate.data.model.ScheduleSlot
+import com.example.mrprivate.data.model.TeacherProfile
 import com.example.mrprivate.ui.components.*
 
 // ==================== 11. شاشة انتظار قبول المعلم ====================

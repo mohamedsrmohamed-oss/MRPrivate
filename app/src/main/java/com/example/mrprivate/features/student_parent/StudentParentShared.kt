@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
-import com.example.mrprivate.*
+import com.example.mrprivate.MrPrivateState
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.features.auth.AccountAuth
 import com.example.mrprivate.features.auth.AuthError
 import com.example.mrprivate.features.auth.rememberAuthErrorTexts

@@ -10,13 +10,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.mrprivate.MainActivity
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.StudentProfile
-import com.example.mrprivate.TeacherProfile
-import com.example.mrprivate.getTodayDateKey
-import com.example.mrprivate.slotHourKey
-import com.example.mrprivate.ui.components.formatHour12
-import com.example.mrprivate.ui.components.isBreakValue
+import com.example.mrprivate.data.model.*
+import com.example.mrprivate.ui.components.*
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

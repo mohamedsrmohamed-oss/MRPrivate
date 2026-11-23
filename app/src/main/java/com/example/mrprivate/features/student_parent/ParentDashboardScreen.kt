@@ -27,11 +27,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mrprivate.*
-import com.example.mrprivate.LocalIsArabic
+import com.example.mrprivate.MrPrivateState
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.features.admin.EditStudentDialog
 import com.example.mrprivate.ui.components.*
-import com.example.mrprivate.uriToBase64
 
 // ==================== نظام التنبيهات وتذكير بمواعيد الحصص القادمة ====================
 data class UpcomingSessionReminder(

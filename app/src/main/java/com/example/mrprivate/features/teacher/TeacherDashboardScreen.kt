@@ -22,20 +22,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mrprivate.LocalIsArabic
 import com.example.mrprivate.MrPrivateState
-import com.example.mrprivate.QuizExam
 import com.example.mrprivate.R
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.StudentEnrollment
-import com.example.mrprivate.TeacherProfile
+import com.example.mrprivate.data.model.QuizExam
+import com.example.mrprivate.data.model.ScheduleSlot
+import com.example.mrprivate.data.model.StudentEnrollment
+import com.example.mrprivate.data.model.TeacherProfile
 import com.example.mrprivate.features.quiz.CreateQuizFromPaperDialog
 import com.example.mrprivate.features.quiz.TeacherQuizResultsDialog
-import com.example.mrprivate.tr
-import com.example.mrprivate.trValue
-import com.example.mrprivate.translateValue
 import com.example.mrprivate.ui.components.*
-import com.example.mrprivate.uriToBase64
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

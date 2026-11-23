@@ -20,11 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mrprivate.MrPrivateState
-import com.example.mrprivate.QuizExam
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.TeacherProfile
-import com.example.mrprivate.governoratesWithAreas
-import com.example.mrprivate.tr
+import com.example.mrprivate.data.model.QuizExam
+import com.example.mrprivate.data.model.ScheduleSlot
+import com.example.mrprivate.data.model.TeacherProfile
 import com.example.mrprivate.ui.components.*
 
 @Composable

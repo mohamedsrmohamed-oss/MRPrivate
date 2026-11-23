@@ -25,14 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mrprivate.DailyScheduleData
-import com.example.mrprivate.LocalIsArabic
 import com.example.mrprivate.MrPrivateState
-import com.example.mrprivate.daysOfWeek
-import com.example.mrprivate.getTodayDateKey
-import com.example.mrprivate.isDateInPast
-import com.example.mrprivate.tr
-import com.example.mrprivate.trValue
+import com.example.mrprivate.data.model.*
 import java.util.Locale
 
 // ==================== مكونات الجدول: التقويم الشهري وشاشة اليوم ====================

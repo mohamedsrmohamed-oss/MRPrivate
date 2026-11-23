@@ -23,11 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.mrprivate.QuizExam
-import com.example.mrprivate.QuizSubmission
-import com.example.mrprivate.StudentProfile
-import com.example.mrprivate.tr
-import com.example.mrprivate.trValue
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.ui.components.*
 import kotlinx.coroutines.delay
 import java.util.Locale

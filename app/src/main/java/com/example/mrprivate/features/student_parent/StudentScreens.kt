@@ -30,8 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mrprivate.*
+import com.example.mrprivate.MrPrivateState
 import com.example.mrprivate.R
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.services.StudentNotificationHelper
 import com.example.mrprivate.ui.components.*
 

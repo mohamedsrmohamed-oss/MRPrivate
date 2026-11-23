@@ -36,15 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mrprivate.MrPrivateState
-import com.example.mrprivate.QuizExam
-import com.example.mrprivate.QuizQuestion
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.TeacherProfile
-import com.example.mrprivate.getTodayDateKey
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.services.extractQuestionsFromPaperImageAI
 import com.example.mrprivate.services.uriToResizedBase64
-import com.example.mrprivate.tr
-import com.example.mrprivate.trValue
 import com.example.mrprivate.ui.components.*
 import kotlinx.coroutines.launch
 import java.io.File

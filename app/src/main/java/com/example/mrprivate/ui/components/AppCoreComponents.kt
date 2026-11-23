@@ -35,13 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mrprivate.LocalIsArabic
-import com.example.mrprivate.LocalToggleLanguage
 import com.example.mrprivate.MrPrivateState
-import com.example.mrprivate.rememberIsNetworkConnected
-import com.example.mrprivate.saveThemePref
-import com.example.mrprivate.tr
-import com.example.mrprivate.trValue
 
 // ==================== 1. الهوية البصرية ونظام التصميم الحديث (Elkheta Infographic UI) ====================
 val DarkPurple = Color(0xFF4A148C)

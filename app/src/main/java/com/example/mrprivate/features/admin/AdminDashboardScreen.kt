@@ -15,13 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mrprivate.AdminAccount
 import com.example.mrprivate.MrPrivateState
-import com.example.mrprivate.ScheduleSlot
-import com.example.mrprivate.StudentProfile
-import com.example.mrprivate.TeacherProfile
+import com.example.mrprivate.data.model.*
 import com.example.mrprivate.features.auth.AuthError
-import com.example.mrprivate.tr
 import com.example.mrprivate.ui.components.*
 
 @OptIn(ExperimentalMaterial3Api::class)
