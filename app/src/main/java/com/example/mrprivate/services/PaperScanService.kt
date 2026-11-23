@@ -6,9 +6,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
-import com.example.mrprivate.PaperScanResult
 import com.example.mrprivate.QuizQuestion
-import com.example.mrprivate.parseRawTextIntoQuestions
+import com.example.mrprivate.features.quiz.PaperScanResult
+import com.example.mrprivate.features.quiz.parseRawTextIntoQuestions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
