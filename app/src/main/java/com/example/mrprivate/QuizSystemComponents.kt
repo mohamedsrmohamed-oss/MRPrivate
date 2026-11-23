@@ -4,6 +4,7 @@ package com.example.mrprivate
 
 import com.example.mrprivate.services.extractQuestionsFromPaperImageAI
 import com.example.mrprivate.services.uriToResizedBase64
+import com.example.mrprivate.ui.components.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.Toast

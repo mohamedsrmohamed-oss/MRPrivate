@@ -1,4 +1,6 @@
-package com.example.mrprivate
+@file:Suppress("DEPRECATION", "unused", "UNUSED_VARIABLE", "UNUSED_IMPORT")
+
+package com.example.mrprivate.ui.components
 
 import android.widget.Toast
 import androidx.compose.animation.core.LinearEasing
@@ -54,29 +56,37 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.mrprivate.LocalIsArabic
+import com.example.mrprivate.MrPrivateState
+import com.example.mrprivate.R
+import com.example.mrprivate.ScheduleSlot
+import com.example.mrprivate.StudentEnrollment
+import com.example.mrprivate.StudentProfile
+import com.example.mrprivate.TeacherProfile
+import com.example.mrprivate.getTodayDateKey
+import com.example.mrprivate.slotHourKey
+import com.example.mrprivate.tr
+import com.example.mrprivate.trValue
 import kotlinx.coroutines.delay
 import java.util.Calendar
 
 // ==================== الهوية اللونية الجديدة لكل دور ====================
-// الطالب: Aurora (سماوي ← نيلي ← موف)
-val AuroraDeep = Color(0xFF0369A1)
-val AuroraMid = Color(0xFF4F46E5)
-val AuroraEnd = Color(0xFF9333EA)
-val AuroraGlow = Color(0xFF22D3EE)
-val AuroraAccent = Color(0xFF4338CA)
-val AuroraSkyTop = Color(0xFFD6F0FF)
-val AuroraSkyBottom = Color(0xFFF2FAFF)
-val AuroraLilacTop = Color(0xFFEDE4FF)
-val AuroraLilacBottom = Color(0xFFFAF6FF)
+val AuroraDeep = Color(0xFF1E3A8A)
+val AuroraMid = Color(0xFF2563EB)
+val AuroraEnd = Color(0xFF38BDF8)
+val AuroraGlow = Color(0xFF60A5FA)
+val AuroraAccent = Color(0xFF1D4ED8)
+val AuroraSkyTop = Color(0xFFE0F2FE)
+val AuroraSkyBottom = Color(0xFFBAE6FD)
+val AuroraLilacTop = Color(0xFFF3E8FF)
+val AuroraLilacBottom = Color(0xFFE9D5FF)
 
-// ولي الأمر: أزرق نيلي
-val ParentDeep = Color(0xFF1E3A8A)
-val ParentMid = Color(0xFF3730A3)
-val ParentEnd = Color(0xFF4F46E5)
-val ParentGlow = Color(0xFF60A5FA)
-val ParentAccent = Color(0xFF312E81)
+val ParentDeep = Color(0xFF0F766E)
+val ParentMid = Color(0xFF0D9488)
+val ParentEnd = Color(0xFF2DD4BF)
+val ParentGlow = Color(0xFF5EEAD4)
+val ParentAccent = Color(0xFF115E59)
 
-// المعلم: بنفسجي
 val TeacherPurple = Color(0xFF7C3AED)
 val TeacherPurpleDark = Color(0xFF5B21B6)
 val TeacherPurpleEnd = Color(0xFF9333EA)
@@ -352,7 +362,7 @@ fun HeroHomeSkeleton() {
 
 /** يعرض Skeleton حتى يصل أول تحميل من Firebase (بحد أقصى 6 ثوانٍ كي لا يعلق عند انقطاع الشبكة) */
 @Composable
-private fun rememberShowSkeleton(appState: MrPrivateState): Boolean {
+internal fun rememberShowSkeleton(appState: MrPrivateState): Boolean {
     var timedOut by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(6_000L)
@@ -377,7 +387,7 @@ fun StudentHeroHome(
 }
 
 @Composable
-private fun StudentHeroHomeContent(
+internal fun StudentHeroHomeContent(
     student: StudentProfile,
     appState: MrPrivateState,
     onOpenSchedule: () -> Unit,
@@ -470,7 +480,7 @@ fun ParentHeroCard(
 }
 
 @Composable
-private fun ParentHeroCardContent(
+internal fun ParentHeroCardContent(
     children: List<StudentProfile>,
     allSchedules: List<ScheduleSlot>,
     allTeachers: List<TeacherProfile>,

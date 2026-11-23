@@ -11,3 +11,4 @@
 }
 -keep class com.example.mrprivate.services.** { *; }
 -keep class com.example.mrprivate.data.** { *; }
+-keep class com.example.mrprivate.ui.components.** { *; }

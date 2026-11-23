@@ -8,6 +8,7 @@ import com.example.mrprivate.data.repository.parseAdminSnapshot
 import com.example.mrprivate.data.repository.parseStudentSnapshot
 import com.example.mrprivate.data.repository.parseTeacherSnapshot
 import com.example.mrprivate.services.uriToResizedBase64
+import com.example.mrprivate.ui.components.*
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager

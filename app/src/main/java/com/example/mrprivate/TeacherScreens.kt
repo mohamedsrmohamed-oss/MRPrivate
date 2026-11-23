@@ -2,6 +2,7 @@
 
 package com.example.mrprivate
 
+import com.example.mrprivate.ui.components.*
 import android.content.Context
 import android.content.Intent
 import android.net.Uri

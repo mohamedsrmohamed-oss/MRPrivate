@@ -1,35 +1,16 @@
 @file:Suppress("DEPRECATION", "unused", "UNUSED_VARIABLE", "UNUSED_IMPORT")
 
-package com.example.mrprivate
+package com.example.mrprivate.ui.components
 
-import android.content.Context
-import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import android.net.Uri
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -39,39 +20,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.core.content.edit
-import androidx.core.net.toUri
-import com.google.firebase.database.*
+import com.example.mrprivate.DailyScheduleData
+import com.example.mrprivate.LocalIsArabic
+import com.example.mrprivate.MrPrivateState
+import com.example.mrprivate.daysOfWeek
+import com.example.mrprivate.getTodayDateKey
+import com.example.mrprivate.isDateInPast
+import com.example.mrprivate.tr
+import com.example.mrprivate.trValue
 import java.util.Locale
-import java.util.UUID
-import kotlin.math.ceil
 
 // ==================== مكونات الجدول: التقويم الشهري وشاشة اليوم ====================
-private val monthNamesAr = listOf("يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر")
-private val monthNamesEn = listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
-private val weekHeadersAr = listOf("سبت", "أحد", "اثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة")
-private val weekHeadersEn = listOf("Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri")
+internal val monthNamesAr = listOf("يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر")
+internal val monthNamesEn = listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+internal val weekHeadersAr = listOf("سبت", "أحد", "اثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة")
+internal val weekHeadersEn = listOf("Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri")
 
 /** ساعات اليوم في الجدول (08:00 – 23:00) وتُعرض بنظام 12 ساعة */
 val timetableHours: List<String> = (8..23).map { String.format(Locale.US, "%02d:00", it) }
@@ -180,7 +148,7 @@ fun MonthCalendar(
 }
 
 @Composable
-private fun CalendarDayCell(
+internal fun CalendarDayCell(
     modifier: Modifier,
     dayNum: Int,
     day: DailyScheduleData?,
@@ -401,7 +369,7 @@ fun InlineStudentDayScheduleSection(
 }
 
 @Composable
-private fun HourSlotRow(
+internal fun HourSlotRow(
     hour: String,
     value: String,
     subjects: List<String>,
